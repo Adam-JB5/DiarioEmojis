@@ -1,10 +1,17 @@
 package com.example.diariodeemojis
 
+import android.animation.ValueAnimator
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diariodeemojis.*
+import com.google.android.filament.View
+
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var rootLayout: LinearLayout
     private lateinit var imagenEmocion: ImageView
     private lateinit var inputNota: EditText
     private lateinit var btnGuardar: Button
@@ -22,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // ---- Vincular vistas ----
+        rootLayout = findViewById(R.id.rootLayout)
         imagenEmocion = findViewById(R.id.imagenEmocion)
         inputNota = findViewById(R.id.inputNota)
         btnGuardar = findViewById(R.id.btnGuardar)
@@ -61,6 +69,26 @@ class MainActivity : AppCompatActivity() {
     // ---- Cambiar emoción ----
     private fun cambiarEmocion(emocion: String) {
         emocionActual = emocion
+
+        val bgColor = when(emocion) {
+            "happy" -> Color.parseColor("#FFF59D")   // amarillo
+            "sad" -> Color.parseColor("#90CAF9")     // azul
+            "calm" -> Color.parseColor("#A5D6A7")    // verde suave
+            "angry" -> Color.parseColor("#EF9A9A")   // rojo
+            else -> Color.WHITE
+        }
+
+
+        val currentColor = (rootLayout.background as? ColorDrawable)?.color ?: Color.WHITE
+
+        val animator = ValueAnimator.ofArgb(currentColor, bgColor).apply {
+            duration = 500
+            addUpdateListener { valueAnimator ->
+                rootLayout  .setBackgroundColor(valueAnimator.animatedValue as Int)
+            }
+        }
+        animator.start()
+
         val resId = when (emocion) {
             "happy" -> R.drawable.happy
             "sad" -> R.drawable.sad
